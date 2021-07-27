@@ -15,32 +15,32 @@
 #ifndef UART3_H_
 #define UART3_H_
 
-#ifndef UART3_BAUD          // Transmission frequency in bits/s
+#ifndef UART3_BAUD              // Transmission frequency in bits/s
     #define UART3_BAUD 4800UL
 
-    #ifndef UART3_USE2X     // Double speed mode
-                            // 0 = Disabled
-                            // 1 = Enabled
+    #ifndef UART3_USE2X         // Double speed mode
+                                // 0 = Disabled
+                                // 1 = Enabled
         #define UART3_USE2X 1
     #endif
 #endif
 
-#ifndef UART3_DATASIZE       // Setup 5 to 8
+#ifndef UART3_DATASIZE          // Setup 5 to 8
     #define UART3_DATASIZE 8
 #endif
 
 
-#ifndef UART3_PARITY         // Setup 0 = none | 1 = even | 2 = odd
+#ifndef UART3_PARITY            // Setup 0 = none | 1 = even | 2 = odd
     #define UART3_PARITY 0
 #endif
 
 
-#ifndef UART3_STOPBITS       // Setup 1 - 2
+#ifndef UART3_STOPBITS          // Setup 1 - 2
     #define UART3_STOPBITS 1
 #endif
 
-#ifndef UART3_RXC_ECHO       // Setup if echo occurs on data receiving
-    #define UART3_RXC_ECHO
+#ifndef UART3_RXC_ECHO          // Setup if echo occurs on data receiving
+    #define UART3_RXC_ECHO      // (disabled if UART_TXCIE or UART_UDRIE is set)
 #endif
 
 // Definition of UART processing (Enabled = Interrupt/Disabled = Polling)

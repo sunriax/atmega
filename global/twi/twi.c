@@ -32,11 +32,11 @@ unsigned char twi_init(TWI_Mode operation)
     // Master / Slave setup
     switch(operation)
     {
-        case Slave :    // Slave Mode
+        case TWI_Slave :    // Slave Mode
                     TWSR &= ~(0x03);                        // Reset TWI Prescaler
                     TWCR = (1<<TWEA) | (1<<TWEN);           // Enable TWI Bus and Acknowledge to TWI_ADDR or general call
                     break;
-        default    :    // Master mode
+        default :           // Master mode
                     TWBR = (unsigned char)(TWI_BITRATE);    // Setup TWI Bitrate
                     TWSR = (unsigned char)(TWI_PRESCALE);   // Setup TWI Prescaler
                     break;
@@ -82,8 +82,8 @@ unsigned char twi_status(void)
     //  +---------------------------------------------------------------+
     //  |                   TWI start transmission                      |
     //  +---------------------------------------------------------------+
-    //  |    Return:    None        ->  Start successful                |
-    //  |               Start       ->  Start failure                   |
+    //  |    Return:    TWI_None        ->  Start successful            |
+    //  |               TWI_Start       ->  Start failure               |
     //  +---------------------------------------------------------------+
     TWI_Error twi_start(void)
     {
@@ -95,8 +95,8 @@ unsigned char twi_status(void)
     
         // Check if an error occurred
         if(((TWSR & 0xF8) == TWI_STATUS_START) || ((TWSR & 0xF8) == TWI_STATUS_REPEATED_START))
-            return None;    // (Repeated)Start successfully
-        return Start;       // (Repeated)Start failure
+            return TWI_None;    // (Repeated)Start successfully
+        return TWI_Start;       // (Repeated)Start failure
     }
 
     //  +---------------------------------------------------------------+
@@ -116,9 +116,9 @@ unsigned char twi_status(void)
     //  | Parameter:    address     ->  Adress (Bit6:0) of slave device |
     //  |               operation   ->  WRITE/READ operation            |
     //  |                                                               |
-    //  |    Return:    None        ->  Addressing successful           |
-    //  |               Arbitration ->  Arbitration lost (multi master) |
-    //  |               General     ->  Error occured                   |
+    //  |    Return:    TWI_None        ->  Addressing successful       |
+    //  |               TWI_Arbitration ->  Arbitration lost (m. master)|
+    //  |               TWI_General     ->  Error occured               |
     //  +---------------------------------------------------------------+
     TWI_Error twi_address(unsigned char address, TWI_Operation operation)
     {
@@ -130,23 +130,23 @@ unsigned char twi_status(void)
             asm volatile("NOP");
     
         // ADDRESS + WRITE operation
-        if(operation == Write)
+        if(operation == TWI_Write)
         {
             if(((TWSR & 0xF8) == TWI_STATUS_ADDRESS_WRITE_ACK) || ((TWSR & 0xF8) == TWI_STATUS_ADDRESS_WRITE_NACK))
-                return None;
+                return TWI_None;
         }
         // ADDRESS + READ operation
         else
         {
             if(((TWSR & 0xF8) == TWI_STATUS_ADDRESS_READ_ACK) || ((TWSR & 0xF8) == TWI_STATUS_ADDRESS_READ_NACK))
-                return None;
+                return TWI_None;
         }
         
         // Check if arbitration lost (only multi-master mode)
         if((TWSR & 0xF8) == TWI_STATUS_ARBITRATION_LOST)
-            return Arbitration;
+            return TWI_Arbitration;
         
-        return General;
+        return TWI_General;
     }
 
     //  +---------------------------------------------------------------+
@@ -154,9 +154,9 @@ unsigned char twi_status(void)
     //  +---------------------------------------------------------------+
     //  | Parameter:    data        ->  Data to transmit                |
     //  |                                                               |
-    //  |    Return:    None        ->  Data transmitted successful     |
-    //  |               Arbitration ->  Arbitration lost (multi master) |
-    //  |               General     ->  Error occured                   |
+    //  |    Return:    TWI_None        ->  Data transmitted successful |
+    //  |               TWI_Arbitration ->  Arbitration lost (m. master)|
+    //  |               TWI_General     ->  Error occured               |
     //  +---------------------------------------------------------------+
     TWI_Error twi_set(unsigned char data)
     {
@@ -169,54 +169,53 @@ unsigned char twi_status(void)
     
         // Check if an error occurred
         if(((TWSR & 0xF8) == TWI_STATUS_DATA_WRITE_ACK) || ((TWSR & 0xF8) == TWI_STATUS_DATA_WRITE_NACK))
-            return None;
+            return TWI_None;
         
         // Check if arbitration lost (only multi-master mode)
         if((TWSR & 0xF8) == TWI_STATUS_ARBITRATION_LOST)
-            return Arbitration;
+            return TWI_Arbitration;
         
-        return General;
+        return TWI_General;
     }
 
     //  +---------------------------------------------------------------+
     //  |                   TWI receive data                            |
     //  +---------------------------------------------------------------+
     //  | Parameter:    data        ->  Received data                   |
-    //  |               acknowledge ->  ACK/NACK                        |
+    //  |               acknowledge ->  TWI_ACK/TWI_NACK                |
     //  |                                                               |
-    //  |    Return:    None        ->  Data received successful        |
-    //  |               Acknowledge ->  Wrong ACK/NACK parameter        |
-    //  |               Arbitration ->  Arbitration lost (multi master) |
-    //  |               General     ->  Error occured                   |
+    //  |    Return:    TWI_None        ->  Data received successful    |
+    //  |               TWI_Acknowledge ->  Wrong ACK/NACK parameter    |
+    //  |               TWI_Arbitration ->  Arbitration lost (m. master)|
+    //  |               TWI_General     ->  Error occured               |
     //  +---------------------------------------------------------------+
     TWI_Error twi_get(unsigned char *data, TWI_Acknowledge acknowledge)
     {
         // Check if ACK should be sent
-        if(acknowledge == ACK)
+        if(acknowledge == TWI_ACK)
             TWCR = (1<<TWINT) | (1<<TWEA) | (1<<TWEN);  // Transmit databyte + ACK
         // Check if NACK should be sent
-        else if(acknowledge == NACK)
+        else if(acknowledge == TWI_NACK)
             TWCR = (1<<TWINT) | (1<<TWEN);              // Transmit databyte + NACK
         else
-            return Acknowledge;
+            return TWI_Ack;
     
         // Check if transmission done
         while (!(TWCR & (1<<TWINT)))
             asm volatile("NOP");
     
-        // Write Data to pointer
+        // TWI_Write Data to pointer
         *data = TWDR;
     
         // Check if an error occurred
         if(((TWSR & 0xF8) == TWI_STATUS_DATA_READ_ACK) || ((TWSR & 0xF8) == TWI_STATUS_DATA_READ_NACK))
-            return None;
-            
+            return TWI_None;
         
         // Check if arbitration lost (only multi-master mode)
         if((TWSR & 0xF8) == TWI_STATUS_ARBITRATION_LOST)
-            return Arbitration;
+            return TWI_Arbitration;
         
-        return General;
+        return TWI_General;
     }
 
 #endif

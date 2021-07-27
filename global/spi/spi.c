@@ -112,8 +112,8 @@ void spi_select(SPI_Select mode)
 {
     switch(mode)
     {
-        case Enable : SPI_PORT &= ~(1<<SPI_SS);   break;  // Slave Select On
-        default     : SPI_PORT |=  (1<<SPI_SS);   break;  // Slave Select Off
+        case SPI_Enable : SPI_PORT &= ~(1<<SPI_SS);   break;  // Slave Select On
+        default         : SPI_PORT |=  (1<<SPI_SS);   break;  // Slave Select Off
     }
 }
 
@@ -126,9 +126,9 @@ void spi_select(SPI_Select mode)
 SPI_Select spi_slave_select(void)
 {
     if(!(SPI_PIN & (1<<SPI_SS)))
-        return Enable;
+        return SPI_Enable;
     else
-        return Disable;
+        return SPI_Disable;
 }
 
 #ifndef SPI_SPIE
@@ -187,11 +187,11 @@ SPI_Select spi_slave_select(void)
                     #endif
                 #endif
                 
-                SPDR = temp;        // Write data again into the SPI data register and reset WCOL and SPIF
-                return Collision;   // Return that a collision happened
+                SPDR = temp;            // Write data again into the SPI data register and reset WCOL and SPIF
+                return SPI_Collision;   // Return that a collision happened
             }
-            return Received;        // Return that new data received
+            return SPI_Received;        // Return that new data received
         }
-        return None;                // Return that no new data received
+        return SPI_None;                // Return that no new data received
     }
 #endif

@@ -69,25 +69,25 @@ int main(void)
     lcd_pattern(LCD_CGADDR_CHAR4, pattern_A);
     lcd_pattern(LCD_CGADDR_CHAR5, pattern_F);
     // or
-    //lcd_pattern(Char0, pattern_bell);
-    //lcd_pattern(Char1, pattern_G);
-    //lcd_pattern(Char2, pattern_D);
-    //lcd_pattern(Char3, pattern_R);
-    //lcd_pattern(Char4, pattern_A);
-    //lcd_pattern(Char5, pattern_F);
+    //lcd_pattern(LCD_Char0, pattern_bell);
+    //lcd_pattern(LCD_Char1, pattern_G);
+    //lcd_pattern(LCD_Char2, pattern_D);
+    //lcd_pattern(LCD_Char3, pattern_R);
+    //lcd_pattern(LCD_Char4, pattern_A);
+    //lcd_pattern(LCD_Char5, pattern_F);
     
     // Write data to first Line
     lcd_home();                             // Set cursor to home position
     lcd_char('N');                          // Write single character to LCD display
     lcd_string("UM");                       // Write string to LCD display
-    lcd_ul2ascii(12, Decimal, 4);           // Write unsigned long to LCD display (4 fields reserved)
-    //lcd_sl2ascii(-12, Decimal, 0);        // Write signed long to LCD display (no field reserved)
+    lcd_ul2ascii(12, LCD_Decimal, 4);           // Write unsigned long to LCD display (4 fields reserved)
+    //lcd_sl2ascii(-12, LCD_Decimal, 0);        // Write signed long to LCD display (no field reserved)
     //lcd_d2ascii(2.22, 4, 2);              // Write double to LCD display in standard format
     //lcd_d2ascii(2.22, -1, 2);             // Write double to LCD display in exponential format
     
     lcd_char(LCD_CGADDR_CHAR0);             // Write self defined pattern to LCD display
     // or
-    //lcd_char(Char0);                        // Write self defined pattern to LCD display
+    //lcd_char(LCD_Char0);                        // Write self defined pattern to LCD display
     
     // Write data to second Line
     lcd_cursor(0, 1);                       // Set cursor to second line
@@ -99,11 +99,11 @@ int main(void)
     lcd_char(LCD_CGADDR_CHAR4);
     lcd_char(LCD_CGADDR_CHAR5);
     // or
-    //lcd_char(Char1);
-    //lcd_char(Char2);
-    //lcd_char(Char3);
-    //lcd_char(Char4);
-    //lcd_char(Char5);
+    //lcd_char(LCD_Char1);
+    //lcd_char(LCD_Char2);
+    //lcd_char(LCD_Char3);
+    //lcd_char(LCD_Char4);
+    //lcd_char(LCD_Char5);
     
     
     // Endless loop
@@ -127,12 +127,12 @@ int main(void)
                 // Check if text appears on the screen
                 if((i < LCD_COLUMNS) || (i >= (LCD_COLUMNS_END - LCD_COLUMNS)))
                 {
-                    lcd_shift(Right);   // Shift text on lcd display right
+                    lcd_shift(LCD_Right);   // Shift text on lcd display right
                     _delay_ms(500);     // Decrease speed of shifting
                 }
                 else
                 {
-                    lcd_shift(Right);   // Shift text on lcd display right
+                    lcd_shift(LCD_Right);   // Shift text on lcd display right
                 }
             }
         }

@@ -183,7 +183,7 @@ void lcd_cursor(unsigned char x, unsigned char y)
 //  +---------------------------------------------------------------+
 void lcd_shift(LCD_Shift shift)
 {
-    if(shift == Right)
+    if(shift == LCD_Right)
         lcd_cmd(LCD_SHIFT | LCD_SHIFT_DISPLAY | LCD_SHIFT_RIGHT);
     else
         lcd_cmd(LCD_SHIFT | LCD_SHIFT_DISPLAY);

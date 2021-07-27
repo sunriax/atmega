@@ -28,7 +28,7 @@
     #define SPI2X
 #endif
 
-#ifndef SPI_CLOCK   // Master shift clock
+#ifndef SPI_CLOCK   // SPI_Master shift clock
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // !!! In slave mode the spi clock speed should !!!
     // !!! not exceed f_CPU/4.                      !!!
@@ -49,7 +49,7 @@
     #define SPI_DDR DDRB
 #endif
 
-#ifndef SPI_PIN // Pin for SPI setup
+#ifndef SPI_PIN     // Pin for SPI setup
     #define SPI_PIN PINB
 #endif
 
@@ -100,38 +100,38 @@
 
 enum SPI_Mode_t
 {
-    Slave=0,
-    Master
+    SPI_Slave=0,
+    SPI_Master
 };
 typedef enum SPI_Mode_t SPI_Mode;
 
 enum SPI_Direction_t
 {
-    MSB=0,
-    LSB
+    SPI_MSB=0,
+    SPI_LSB
 };
 typedef enum SPI_Direction_t SPI_Direction;
 
 enum SPI_Edge_t
 {
-    Rising=0,
-    Falling
+    SPI_Rising=0,
+    SPI_Falling
 };
 typedef enum SPI_Edge_t SPI_Polarity;
 typedef enum SPI_Edge_t SPI_Phase;
 
 enum SPI_Select_t
 {
-    Disable=0,
-    Enable
+    SPI_Disable=0,
+    SPI_Enable
 };
 typedef enum SPI_Select_t SPI_Select;
 
 enum SPI_Status_t
 {
-    Received=0,
-    Collision,
-    None
+    SPI_Received=0,
+    SPI_Collision,
+    SPI_None
 };
 typedef enum SPI_Status_t SPI_Status;
 

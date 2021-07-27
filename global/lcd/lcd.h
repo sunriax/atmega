@@ -183,29 +183,29 @@
 
 enum LCD_Shift_t
 {
-    Right=0,
-    Left
+    LCD_Right=0,
+    LCD_Left
 };
 typedef enum LCD_Shift_t LCD_Shift;
 
 enum LCD_Base_t
 {
-    Binary=2,
-    Decimal=10,
-    Hexadecimal=16    
+    LCD_Binary=2,
+    LCD_Decimal=10,
+    LCD_Hexadecimal=16    
 };
 typedef enum LCD_Base_t LCD_Base;
 
 enum LCD_Char_t
 {
-    Char0=LCD_CGADDR_CHAR0,
-    Char1=LCD_CGADDR_CHAR1,
-    Char2=LCD_CGADDR_CHAR2,
-    Char3=LCD_CGADDR_CHAR3,
-    Char4=LCD_CGADDR_CHAR4,
-    Char5=LCD_CGADDR_CHAR5,
-    Char6=LCD_CGADDR_CHAR6,
-    Char7=LCD_CGADDR_CHAR7
+    LCD_Char0=LCD_CGADDR_CHAR0,
+    LCD_Char1=LCD_CGADDR_CHAR1,
+    LCD_Char2=LCD_CGADDR_CHAR2,
+    LCD_Char3=LCD_CGADDR_CHAR3,
+    LCD_Char4=LCD_CGADDR_CHAR4,
+    LCD_Char5=LCD_CGADDR_CHAR5,
+    LCD_Char6=LCD_CGADDR_CHAR6,
+    LCD_Char7=LCD_CGADDR_CHAR7
 };
 typedef enum LCD_Char_t LCD_Char;
 

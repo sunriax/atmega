@@ -15,32 +15,32 @@
 #ifndef UART0_H_
 #define UART0_H_
 
-#ifndef UART0_BAUD          // Transmission frequency in bits/s
+#ifndef UART0_BAUD              // Transmission frequency in bits/s
     #define UART0_BAUD 9600UL
     
-    #ifndef UART0_USE2X     // Double speed mode
-                            // 0 = Disabled
-                            // 1 = Enabled
+    #ifndef UART0_USE2X         // Double speed mode
+                                // 0 = Disabled
+                                // 1 = Enabled
         #define UART0_USE2X 1
     #endif
 #endif
 
-#ifndef UART0_DATASIZE       // Setup 5 to 8
+#ifndef UART0_DATASIZE          // Setup 5 to 8
     #define UART0_DATASIZE 8
 #endif
 
 
-#ifndef UART0_PARITY         // Setup 0 = none | 1 = even | 2 = odd
+#ifndef UART0_PARITY            // Setup 0 = none | 1 = even | 2 = odd
     #define UART0_PARITY 0
 #endif
 
 
-#ifndef UART0_STOPBITS       // Setup 1 - 2
+#ifndef UART0_STOPBITS          // Setup 1 - 2
     #define UART0_STOPBITS 1
 #endif
 
-#ifndef UART0_RXC_ECHO       // Setup if echo occurs on data receiving
-    #define UART0_RXC_ECHO
+#ifndef UART0_RXC_ECHO          // Setup if echo occurs on data receiving
+    #define UART0_RXC_ECHO      // (disabled if UART_TXCIE or UART_UDRIE is set)
 #endif
 
 // Definition of UART processing (Enabled = Interrupt/Disabled = Polling)
