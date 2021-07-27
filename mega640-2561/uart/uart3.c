@@ -136,7 +136,7 @@ UART_Error uart3_error_flags(void)
     //  |                                                               |
     //  |    Return:    UART_Empty      -> No data in received          |
     //  |               UART_Received   -> Data received                |
-    //  |               UART_Fault      -> UART_Fault @ transmission    |
+    //  |               UART_Fault      -> Fault @ transmission         |
     //  +---------------------------------------------------------------+
     UART_Data uart3_scanchar(char *data)
     {

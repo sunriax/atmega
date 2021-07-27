@@ -21,7 +21,7 @@
 
 // Definition of UART standard output mode (printf/scanf)
 #ifndef UART_STDMODE                // Standard Mode
-    #define UART_STDMODE 1          // 0 = UART_None
+    #define UART_STDMODE 1          // 0 = None
                                     // 1 = printf/scanf
                                     // 2 = printf
                                     // 3 = scanf

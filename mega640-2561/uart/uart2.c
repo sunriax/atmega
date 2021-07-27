@@ -134,9 +134,9 @@ UART_Error uart2_error_flags(void)
     //  +---------------------------------------------------------------+
     //  | Parameter:    0x??        -> Data buffer variable             |
     //  |                                                               |
-    //  |    Return:    UART_Empty       -> No data in received              |
-    //  |               UART_Received    -> Data received                    |
-    //  |               UART_Fault       -> UART_Fault during transmission        |
+    //  |    Return:    UART_Empty      -> No data in received          |
+    //  |               UART_Received   -> Data received                |
+    //  |               UART_Fault      -> Fault @ transmission         |
     //  +---------------------------------------------------------------+
     UART_Data uart2_scanchar(char *data)
     {

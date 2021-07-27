@@ -130,12 +130,13 @@ UART_Error uart1_error_flags(void)
 
 #if !defined(UART1_RXCIE)
     //  +---------------------------------------------------------------+
-    //  |                   UART send character                         |
+    //  |               UART receive character (non blocking)           |
     //  +---------------------------------------------------------------+
-    //  |    Return:    UART_None=0  -> No error ocurred                |
-    //  |               UART_Frame   -> Error in frame                  |
-    //  |               UART_Overrun -> Data overrun @ transmission     |
-    //  |               UART_Parity  -> Parity error                    |
+    //  | Parameter:    0x??        -> Data buffer variable             |
+    //  |                                                               |
+    //  |    Return:    UART_Empty      -> No data in received          |
+    //  |               UART_Received   -> Data received                |
+    //  |               UART_Fault      -> Fault @ transmission         |
     //  +---------------------------------------------------------------+
     UART_Data uart1_scanchar(char *data)
     {
