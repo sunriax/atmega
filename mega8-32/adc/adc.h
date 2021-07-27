@@ -87,23 +87,23 @@
 
 enum ADC_Mode_t
 {
-    SingleEnded=0,
-    DifferentialGain,
-    DifferentialNoGain,
-    DifferentialSpecial
+    ADC_SingleEnded=0,
+    ADC_DifferentialGain,
+    ADC_DifferentialNoGain,
+    ADC_DifferentialSpecial
 };
 typedef enum ADC_Mode_t ADC_Mode;
 
 enum ADC_Channel_t
 {
-    CH0=0,
-    CH1,
-    CH2,
-    CH3,
-    CH4,
-    CH5,
-    CH6,
-    CH7
+    ADC_CH0=0,
+    ADC_CH1,
+    ADC_CH2,
+    ADC_CH3,
+    ADC_CH4,
+    ADC_CH5,
+    ADC_CH6,
+    ADC_CH7
 };
 typedef enum ADC_Channel_t ADC_Channel;
 

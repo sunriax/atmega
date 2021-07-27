@@ -47,7 +47,7 @@ void uart_init(void)
     SETREG |= (0x06 & ((UART_DATASIZE - 5)<<1));    // Setup data size
     
     #if UART_PARITY > 0
-        SETREG |= (0x30 & ((UART_PARITY + 1)<<4));  // Parity Mode
+        SETREG |= (0x30 & ((UART_PARITY + 1)<<4));  // UART_Parity Mode
     #endif
     
     #if UART_STOPBITS > 1
@@ -86,32 +86,32 @@ void uart_init(void)
 //  +---------------------------------------------------------------+
 //  |                   UART send character                         |
 //  +---------------------------------------------------------------+
-//  |    Return:    None=0  -> No error ocurred                     |
-//  |               Frame   -> Error in frame                       |
-//  |               Overrun -> Data overrun during transmission     |
-//  |               Parity  -> Parity error                         |
+//  |    Return:    UART_None=0  -> No error ocurred                |
+//  |               UART_Frame   -> Error in frame                  |
+//  |               UART_Overrun -> Data overrun @ transmission     |
+//  |               UART_Parity  -> Parity error                    |
 //  +---------------------------------------------------------------+
 UART_Error uart_error_flags(void)
 {
-    // Frame error
+    // UART_Frame error
     if(UCSRA & (1<<FE))
     {
         UDR;           // Clear UART data register
-        return Frame;   // Return NUL
+        return UART_Frame;   // Return NUL
     }
-    // Data Overrun error
+    // Data UART_Overrun error
     else if(UCSRA & (1<<DOR))
     {
         UDR;           // Clear UART data register
-        return Overrun; // Return NUL
+        return UART_Overrun; // Return NUL
     }
-    // Parity error
+    // UART_Parity error
     else if(UCSRA & (1<<UPE))
     {
         UDR;           // Clear UART data register
-        return Parity;  // Return NUL
+        return UART_Parity;  // Return NUL
     }
-    return None;
+    return UART_None;
 }
 
 #if !defined(UART_TXCIE) && !defined(UART_UDRIE)
@@ -152,18 +152,26 @@ UART_Error uart_error_flags(void)
 #endif
 
 #if !defined(UART_RXCIE)
-
+    //  +---------------------------------------------------------------+
+    //  |               UART receive character (non blocking)           |
+    //  +---------------------------------------------------------------+
+    //  | Parameter:    0x??        -> Data buffer variable             |
+    //  |                                                               |
+    //  |    Return:    UART_Empty      -> No data in received          |
+    //  |               UART_Received   -> Data received                |
+    //  |               UART_Fault      -> UART_Fault @ transmission    |
+    //  +---------------------------------------------------------------+
     UART_Data uart_scanchar(char *data)
     {
         // If data has been received
         if((UCSRA & (1<<RXC)))
         {
-            // Check if an Error ocurred
-            if(uart_error_flags() != None)
+            // Check if an UART_Error ocurred
+            if(uart_error_flags() != UART_None)
             {
                 UDR;           // Clear UDR0 Data register
                 *data = 0;
-                return Error;
+                return UART_Fault;
             }
             
             *data = UDR;
@@ -173,18 +181,18 @@ UART_Error uart_error_flags(void)
                 uart_putchar(*data);
             #endif
             
-            return Received;
+            return UART_Received;
         }
-        return Empty;
+        return UART_Empty;
     }
     
     //  +---------------------------------------------------------------+
     //  |                   UART receive character                      |
     //  +---------------------------------------------------------------+
     //  | Parameter:    status (ptr) -> Pointer to return status        |
-    //  |                            -> Empty                           |
-    //  |                            -> Received                        |
-    //  |                            -> Error                           |
+    //  |                            -> UART_Empty                      |
+    //  |                            -> UART_Received                   |
+    //  |                            -> UART_Error                      |
     //  |                                                               |
     //  |    Return:    0x??    ->  data/NUL                            |
     //  +---------------------------------------------------------------+
@@ -197,7 +205,7 @@ UART_Error uart_error_flags(void)
         do
         {
             temp = uart_scanchar(&data);
-        } while (temp == Empty);
+        } while (temp == UART_Empty);
         
         *status = temp;
         return data;

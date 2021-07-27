@@ -41,7 +41,7 @@
 
 // Definition of UART standard output mode (printf/scanf)
 #ifndef UART_STDMODE                // Standard Mode
-    #define UART_STDMODE 1          // 0 = None
+    #define UART_STDMODE 1          // 0 = UART_None
                                     // 1 = printf/scanf
                                     // 2 = printf
                                     // 3 = scanf
@@ -73,18 +73,18 @@
 
 enum UART_Data_t
 {
-    Empty=0,
-    Received,
-    Error
+    UART_Empty=0,
+    UART_Received,
+    UART_Fault
 };
 typedef enum UART_Data_t UART_Data;
 
 enum UART_Error_t
 {
-    None=0,
-    Frame,
-    Overrun,
-    Parity
+    UART_None=0,
+    UART_Frame,
+    UART_Overrun,
+    UART_Parity
 };
 typedef enum UART_Error_t UART_Error;
 

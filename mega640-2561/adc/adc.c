@@ -122,7 +122,7 @@ void adc_mode(ADC_Mode mode)
 //  +---------------------------------------------------------------+
 void adc_channel(ADC_Channel channel)
 {
-    if(channel > CH7)
+    if(channel > ADC_CH7)
     {
         ADCSRB |= (1<<MUX5);
         ADMUX = (ADMUX & ~(0x07)) | (0x07 & (0x08 - channel));   // Select ADC Channel

@@ -33,7 +33,7 @@ void uart2_init(void)
     UCSR2C = (0x06 & ((UART2_DATASIZE - 5)<<1));	    // Setup Datasize
     
     #if UART2_PARITY > 0
-        UCSR2C |= (0x30 & ((UART2_PARITY + 1)<<4));  // Parity Mode
+        UCSR2C |= (0x30 & ((UART2_PARITY + 1)<<4));  // UART_Parity Mode
     #endif
     
     #if UART2_STOPBITS > 1
@@ -63,32 +63,32 @@ void uart2_init(void)
 //  +---------------------------------------------------------------+
 //  |                   UART send character                         |
 //  +---------------------------------------------------------------+
-//  |    Return:    None=0  -> No error ocurred                     |
-//  |               Frame   -> Error in frame                       |
-//  |               Overrun -> Data overrun during transmission     |
-//  |               Parity  -> Parity error                         |
+//  |    Return:    UART_None=0  -> No error ocurred                |
+//  |               UART_Frame   -> Error in frame                  |
+//  |               UART_Overrun -> Data overrun @ transmission     |
+//  |               UART_Parity  -> Parity error                    |
 //  +---------------------------------------------------------------+
 UART_Error uart2_error_flags(void)
 {
-    // Frame error
+    // UART_Frame error
     if(UCSR2A & (1<<FE2))
     {
         UDR2;           // Clear UART data register
-        return Frame;   // Return NUL
+        return UART_Frame;   // Return NUL
     }
-    // Data Overrun error
+    // Data UART_Overrun error
     else if(UCSR2A & (1<<DOR2))
     {
         UDR2;           // Clear UART data register
-        return Overrun; // Return NUL
+        return UART_Overrun; // Return NUL
     }
-    // Parity error
+    // UART_Parity error
     else if(UCSR2A & (1<<UPE2))
     {
         UDR2;           // Clear UART data register
-        return Parity;  // Return NUL
+        return UART_Parity;  // Return NUL
     }
-    return None;
+    return UART_None;
 }
 
 #if !defined(UART2_TXCIE) && !defined(UART2_UDRIE)
@@ -134,21 +134,21 @@ UART_Error uart2_error_flags(void)
     //  +---------------------------------------------------------------+
     //  | Parameter:    0x??        -> Data buffer variable             |
     //  |                                                               |
-    //  |    Return:    Empty       -> No data in received              |
-    //  |               Received    -> Data received                    |
-    //  |               Error       -> Error during transmission        |
+    //  |    Return:    UART_Empty       -> No data in received              |
+    //  |               UART_Received    -> Data received                    |
+    //  |               UART_Fault       -> UART_Fault during transmission        |
     //  +---------------------------------------------------------------+
     UART_Data uart2_scanchar(char *data)
     {
         // If data has been received
         if((UCSR2A & (1<<RXC2)))
         {
-            // Check if an Error ocurred
-            if(uart2_error_flags() != None)
+            // Check if an UART_Fault ocurred
+            if(uart2_error_flags() != UART_None)
             {
                 UDR2;           // Clear UDR2 Data register
                 *data = 0;
-                return Error;
+                return UART_Fault;
             }
         
             *data = UDR2;
@@ -158,18 +158,18 @@ UART_Error uart2_error_flags(void)
                 uart2_putchar(*data);
             #endif
         
-            return Received;
+            return UART_Received;
         }
-        return Empty;
+        return UART_Empty;
     }
     
     //  +---------------------------------------------------------------+
-    //  |               UART receive character (blocking)               |
+    //  |                   UART receive character                      |
     //  +---------------------------------------------------------------+
     //  | Parameter:    status (ptr) -> Pointer to return status        |
-    //  |                            -> Empty                           |
-    //  |                            -> Received                        |
-    //  |                            -> Error                           |
+    //  |                            -> UART_Empty                      |
+    //  |                            -> UART_Received                   |
+    //  |                            -> UART_Error                      |
     //  |                                                               |
     //  |    Return:    0x??    ->  data/NUL                            |
     //  +---------------------------------------------------------------+
@@ -182,7 +182,7 @@ UART_Error uart2_error_flags(void)
         do 
         {
             temp = uart2_scanchar(&data);
-        } while (temp == Empty);
+        } while (temp == UART_Empty);
         
         *status = temp;
         return data;

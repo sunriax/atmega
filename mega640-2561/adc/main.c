@@ -32,10 +32,10 @@ int main(void)
     
     // ADC Mode
     // Standard: Single Ended, no configuration required
-    adc_mode(SingleEnded);
+    adc_mode(ADC_SingleEnded);
     
     // Select ADC channel 5 (unipolar mode)
-    adc_channel(CH5);
+    adc_channel(ADC_CH5);
     
     while (1) 
     {
