@@ -39,6 +39,36 @@
     #define UART_RXC_ECHO           // (disabled if UART_TXCIE or UART_UDRIE is set)
 #endif
 
+#ifndef UART_HANDSHAKE              // Handshake between communication systems
+    #define UART_HANDSHAKE 1        // 1 = Software (XON/XOFF)
+                                    // 2 = Hardware
+                                    
+    #if UART_HANDSHAKE == 2         // PORT settings for hardware handshake
+        #ifndef UART_HANDSHAKE_DDR
+            #define UART_HANDSHAKE_DDR  DDRC
+        #endif
+        #ifndef UART_HANDSHAKE_PORT
+            #define UART_HANDSHAKE_PORT PORTC
+        #endif
+        #ifndef UART_HANDSHAKE_PIN
+            #define UART_HANDSHAKE_PIN  PINC
+        #endif
+        #ifndef UART_HANDSHAKE_CTS
+            #define UART_HANDSHAKE_CTS  PINC0
+        #endif
+        #ifndef UART_HANDSHAKE_RTS
+            #define UART_HANDSHAKE_RTS  PINC1
+        #endif
+    #endif
+    
+    #ifndef UART_HANDSHAKE_XON
+        #define UART_HANDSHAKE_XON 0x11
+    #endif
+    #ifndef UART_HANDSHAKE_XOFF
+        #define UART_HANDSHAKE_XOFF 0x13
+    #endif
+#endif
+
 // Definition of UART standard output mode (printf/scanf)
 #ifndef UART_STDMODE                // Standard Mode
     #define UART_STDMODE 1          // 0 = None
@@ -88,6 +118,14 @@ enum UART_Error_t
 };
 typedef enum UART_Error_t UART_Error;
 
+enum UART_Handshake_t
+{
+    UART_Status=0,
+    UART_Ready,
+    UART_Pause
+};
+typedef enum UART_Handshake_t UART_Handshake;
+
 #include <stdio.h>
 #include <avr/io.h>
 #include <util/setbaud.h>
@@ -114,6 +152,12 @@ UART_Error uart_error_flags(void);
     #if UART_STDMODE == 1 || UART_STDMODE == 3
              int uart_scanf(FILE *stream);
             void uart_clear(void);
+    #endif
+#endif
+
+#if !defined(UART_TXCIE) && !defined(UART_UDRIE) && !defined(UART_RXCIE)
+    #if UART_HANDSHAKE > 0
+        UART_Handshake uart_handshake(UART_Handshake status);
     #endif
 #endif
 

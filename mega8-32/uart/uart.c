@@ -27,11 +27,24 @@
 
 #endif
 
+#if !defined(UART_RXCIE) && !defined(UART_TXCIE) && !defined(UART_UDRIE)
+    #if UART_HANDSHAKE > 0
+        static UART_Handshake uart_handshake_sending = UART_Ready;
+    #endif
+#endif
+
 //  +---------------------------------------------------------------+
 //  |                       UART initialization                     |
 //  +---------------------------------------------------------------+
 void uart_init(void)
-{   
+{
+    // Check if hardware flow control is enabled
+    #if UART_HANDSHAKE == 2
+        // Setup RTS (output)/CTS (input)
+        UART_HANDSHAKE_DDR |= (1<<UART_HANDSHAKE_RTS);
+        UART_HANDSHAKE_DDR &= ~(1<<UART_HANDSHAKE_CTS);
+    #endif
+    
     // Check which bit sampling mode should be activated
     #if USE_2X
         UCSRA |= (1<<U2X);          // Setup 8 samples/bit
@@ -174,6 +187,19 @@ UART_Error uart_error_flags(void)
                 return UART_Fault;
             }
             
+            #if UART_HANDSHAKE == 1
+                if (*data == UART_HANDSHAKE_XON)
+                {
+                    uart_handshake_sending = UART_Ready;
+                    return UART_Empty;
+                }                
+                else if (*data == UART_HANDSHAKE_XOFF)
+                {
+                    uart_handshake_sending = UART_Pause;
+                    return UART_Empty;
+                }                
+            #endif
+            
             *data = UDR;
             
             #if defined(UART_RXC_ECHO) && !defined(UART_TXCIE) && !defined(UART_UDRIE)
@@ -234,4 +260,45 @@ UART_Error uart_error_flags(void)
         }
     #endif
 
+#endif
+
+#if !defined(UART_RXCIE) && !defined(UART_TXCIE) && !defined(UART_UDRIE)
+    #if UART_HANDSHAKE > 0
+    //  +---------------------------------------------------------------+
+    //  |                   UART handshake                              |
+    //  +---------------------------------------------------------------+
+    //  | Parameter:    status -> Ready                                 |
+    //  |                         Pause                                 |
+    //  +---------------------------------------------------------------+
+    UART_Handshake uart_handshake(UART_Handshake status)
+    {
+        if(status == UART_Ready)
+        {
+            #if UART_HANDSHAKE == 1
+                uart_putchar(UART_HANDSHAKE_XON);
+            #elif UART_HANDSHAKE == 2
+                UART_HANDSHAKE_PORT &= ~(1<<UART_HANDSHAKE_RTS);
+            #endif
+        }
+        else if(status == UART_Pause)
+        {
+            #if UART_HANDSHAKE == 1
+                uart_putchar(UART_HANDSHAKE_XOFF);
+            #elif UART_HANDSHAKE == 2
+                UART_HANDSHAKE_PORT |= (1<<UART_HANDSHAKE_RTS);
+            #endif
+        }
+        else
+        {
+            #if UART_HANDSHAKE == 1
+                return uart_handshake_sending;
+            #elif UART_HANDSHAKE == 2
+                if (!(UART_HANDSHAKE_PIN & (1<<UART_HANDSHAKE_CTS)))
+                    return UART_Ready;
+                return UART_Pause;
+            #endif
+        }
+        return UART_Status;
+    }
+    #endif
 #endif
