@@ -66,7 +66,7 @@ unsigned char spi_init(SPI_Mode operation, SPI_Direction direction, SPI_Polarity
     SPCR |= ((0x01 & direction)<<5);
     
     // Polarity and Phase of SCK and DATA
-    SPCR |= ((0x04 & polarity)<<3) | ((0x02 & phase)<<2);
+    SPCR |= ((0x01 & polarity)<<3) | ((0x01 & phase)<<2);
     
     // SPI interrupt setup
     #ifdef SPI_SPIE
